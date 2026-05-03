@@ -37,6 +37,12 @@ if __name__ == "__main__":
             temp_alert = 1 if temperature > TEMP_HIGH_THRESHOLD else 0
             humidity_alert = 1 if humidity > HUMIDITY_HIGH_THRESHOLD else 0
 
+            if temp_alert:
+                 print(f"WARNING: Temperature above limit ({TEMP_HIGH_THRESHOLD} C)")
+
+            if humidity_alert:
+                 print(f"WARNING: Humidity above limit ({HUMIDITY_HIGH_THRESHOLD}%)")
+
             blynk.virtual_write(1, temperature)
             blynk.virtual_write(2, humidity)
             blynk.virtual_write(3, temp_alert)
