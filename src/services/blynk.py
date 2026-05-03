@@ -20,32 +20,23 @@ INACTIVITY_TIMEOUT = 30
 last_activity = time()
 
 
-@blynk.on("V1")  # type: ignore[misc]
-def handle_v1_write(value):
-    global last_activity
-    button_value = value[0]
-    last_activity = time()
-    print(f"Current button value: {button_value}")
-
-    if button_value=="1":
-        sense.clear(255,255,255)
-    else:
-        sense.clear()
-
-
 if __name__ == "__main__":
-    print("Blynk application started. Listening for events...")
+    print("Blynk application started.")
+
     try:
         while True:
             blynk.run()
-            blynk.virtual_write(1,sense.temperature)  # Send temperature to virtual pin V0
 
-            now = time()
+            temperature = round(sense.get_temperature(), 1)
+            humidity = round(sense.get_humidity(), 1)
 
-            if now - last_activity > INACTIVITY_TIMEOUT:
-                print(f"No activity for {INACTIVITY_TIMEOUT} seconds. Exiting.")
-                break
+            blynk.virtual_write(1, temperature)
+            blynk.virtual_write(2, humidity)
 
-            sleep(0.1)
+            print(f"Temperature: {temperature} C | Humidity: {humidity} %")
+
+            sleep(2)
+
     except KeyboardInterrupt:
         print("Blynk application stopped.")
+        sense.clear()
