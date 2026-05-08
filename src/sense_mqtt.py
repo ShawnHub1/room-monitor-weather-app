@@ -1,7 +1,12 @@
 #!/usr/bin/env python3
 import os, time, json
+from pathlib import Path
 import paho.mqtt.client as mqtt
 from sense_hat import SenseHat
+from dotenv import load_dotenv
+
+env_path = Path(__file__).resolve().parent.parent / ".env"
+load_dotenv(env_path)
 
 # Config (env variables with defaults) 
 USER_ID = os.getenv("USER_ID", "SCahill")

@@ -6,8 +6,7 @@ def get_outdoor_weather(latitude: float, longitude: float) -> dict:
     params = {
         "latitude": latitude,
         "longitude": longitude,
-        "current": "temperature_2m,relative_humidity_2m,rain",
-        "hourly": "precipitation_probability",
+        "current": "temperature_2m,relative_humidity_2m,rain,wind_speed_10m",
         "forecast_days": 1
     }
 
@@ -20,4 +19,5 @@ def get_outdoor_weather(latitude: float, longitude: float) -> dict:
         "outdoor_temperature": current.get("temperature_2m"),
         "outdoor_humidity": current.get("relative_humidity_2m"),
         "rain_now": current.get("rain"),
+        "wind_speed": current.get("wind_speed_10m"),
     }
