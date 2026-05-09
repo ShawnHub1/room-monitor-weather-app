@@ -58,8 +58,8 @@ SIMULATE_SENSOR = True
 
 def read_sensor_data():
     if SIMULATE_SENSOR:
-        temperature = round(uniform(20, 30), 1)
-        humidity = round(uniform(40, 75), 1)
+        temperature = round(uniform(15, 40), 1)
+        humidity = round(uniform(21, 80), 1)
     else:
         temperature = round(sense.get_temperature(), 1)
         humidity = round(sense.get_humidity(), 1)
