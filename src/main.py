@@ -75,23 +75,27 @@ def check_weather_alerts(rain_now, wind_speed):
     rain_alert = 1 if rain_now is not None and rain_now > 0 else 0
     wind_alert = 1 if wind_speed is not None and wind_speed > WIND_ALERT_THRESHOLD else 0
     weather_warning = 1 if rain_alert or wind_alert else 0
-    return rain_alert, wind_alert, weather_warning
+    return rain_alert, wind_alert
 
-def update_blynk(temperature, humidity, temp_alert, humidity_alert):
+def update_blynk(temperature, humidity, temp_alert, humidity_alert, outdoor_temperature, outdoor_humidity, rain_alert, wind_alert):
     blynk.virtual_write(1, temperature)
     blynk.virtual_write(2, humidity)
     blynk.virtual_write(3, temp_alert)
     blynk.virtual_write(4, humidity_alert)
+    blynk.virtual_write(5, outdoor_temperature if outdoor_temperature is not None else 0)
+    blynk.virtual_write(6, outdoor_humidity if outdoor_humidity is not None else 0)    
+    blynk.virtual_write(7, rain_alert)
+    blynk.virtual_write(8, wind_alert)    
 
 
-def update_led_status(temp_alert, humidity_alert, weather_warning):
+def update_led_status(temp_alert, humidity_alert, rain_alert, wind_alert):
     if temp_alert and humidity_alert:
         sense.clear(255, 0, 255)   # purple
     elif temp_alert:
         sense.clear(255, 0, 0)     # red
     elif humidity_alert:
         sense.clear(255, 255, 0)   # yellow
-    elif weather_warning:
+    elif rain_alert or wind_alert:
         sense.clear(0, 0, 255)     # blue
     else:
         sense.clear(0, 255, 0)     # green
@@ -107,12 +111,15 @@ def log_to_csv(
     wind_speed,
     rain_alert,
     wind_alert,
-    weather_warning,
 ):
+
+    sensor_mode = "simulated" if SIMULATE_SENSOR else "real"
+
     with open(CSV_FILE, "a", newline="") as file:
         writer = csv.writer(file)
         writer.writerow([
             datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            sensor_mode,
             temperature,
             humidity,
             temp_alert,
@@ -123,7 +130,6 @@ def log_to_csv(
             wind_speed,
             rain_alert,
             wind_alert,
-            weather_warning,
         ])
 
 if __name__ == "__main__":
@@ -151,7 +157,7 @@ if __name__ == "__main__":
                 wind_speed = weather.get("wind_speed")
                 next_weather_refresh = now + WEATHER_REFRESH_SECONDS
 
-            rain_alert, wind_alert, weather_warning = check_weather_alerts(rain_now, wind_speed)
+            rain_alert, wind_alert = check_weather_alerts(rain_now, wind_speed)
 
 
             if temp_alert:
@@ -161,13 +167,13 @@ if __name__ == "__main__":
                 print(f"WARNING: Humidity above limit ({HUMIDITY_HIGH_THRESHOLD}%)")
 
             if rain_alert:
-                print("WARNING: Rain detected outside")
+                print(f"WARNING: Rain detected outside")
 
             if wind_alert:
                 print(f"WARNING: High wind detected outside ({wind_speed} km/h)")    
 
-            update_blynk(temperature, humidity, temp_alert, humidity_alert)
-            update_led_status(temp_alert, humidity_alert, weather_warning)
+            update_blynk(temperature, humidity, temp_alert, humidity_alert, outdoor_temperature, outdoor_humidity, rain_alert, wind_alert)
+            update_led_status(temp_alert, humidity_alert, rain_alert, wind_alert)
             log_to_csv(
                 temperature,
                 humidity,
@@ -179,7 +185,6 @@ if __name__ == "__main__":
                 wind_speed,
                 rain_alert,
                 wind_alert,
-                weather_warning,
             )
 
             print(
@@ -193,7 +198,6 @@ if __name__ == "__main__":
                 f"Wind speed: {wind_speed} km/h | "
                 f"Rain alert: {rain_alert} | "
                 f"Wind alert: {wind_alert} | "
-                f"Weather warning: {weather_warning}"
             )
 
             sleep(2)
