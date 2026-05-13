@@ -40,21 +40,21 @@ def ensure_csv_exists():
             writer = csv.writer(file)
             writer.writerow([
                 "timestamp",
-                "temperature",
-                "humidity",
-                "temp_alert",
-                "humidity_alert",
-                "outdoor_temperature",
-                "outdoor_humidity",
-                "rain_now",
-                "wind_speed",
-                "rain_alert",
-                "wind_alert",
-                "weather_warning",
+                "sensor_mode",
+                "indoor_temp_c",
+                "indoor_humidity_percent",
+                "temp_status",
+                "humidity_status",
+                "outdoor_temp_c",
+                "outdoor_humidity_percent",
+                "rain_mm",
+                "wind_kmh",
+                "rain_status",
+                "wind_status",
             ])
 
 
-SIMULATE_SENSOR = True
+SIMULATE_SENSOR = False
 
 def read_sensor_data():
     if SIMULATE_SENSOR:
@@ -75,7 +75,7 @@ def check_weather_alerts(rain_now, wind_speed):
     rain_alert = 1 if rain_now is not None and rain_now > 0 else 0
     wind_alert = 1 if wind_speed is not None and wind_speed > WIND_ALERT_THRESHOLD else 0
     weather_warning = 1 if rain_alert or wind_alert else 0
-    return rain_alert, wind_alert
+    return rain_alert, wind_alert, weather_warning
 
 def update_blynk(temperature, humidity, temp_alert, humidity_alert, outdoor_temperature, outdoor_humidity, rain_alert, wind_alert):
     blynk.virtual_write(1, temperature)
@@ -115,6 +115,11 @@ def log_to_csv(
 
     sensor_mode = "simulated" if SIMULATE_SENSOR else "real"
 
+    temp_status = "HIGH" if temp_alert else "OK"
+    humidity_status = "HIGH" if humidity_alert else "OK"
+    rain_status = "RAIN" if rain_alert else "CLEAR"
+    wind_status = "WIND RISK" if wind_alert else "OK"
+
     with open(CSV_FILE, "a", newline="") as file:
         writer = csv.writer(file)
         writer.writerow([
@@ -122,14 +127,14 @@ def log_to_csv(
             sensor_mode,
             temperature,
             humidity,
-            temp_alert,
-            humidity_alert,
+            temp_status,
+            humidity_status,
             outdoor_temperature,
             outdoor_humidity,
             rain_now,
             wind_speed,
-            rain_alert,
-            wind_alert,
+            rain_status,
+            wind_status,
         ])
 
 if __name__ == "__main__":
@@ -157,7 +162,7 @@ if __name__ == "__main__":
                 wind_speed = weather.get("wind_speed")
                 next_weather_refresh = now + WEATHER_REFRESH_SECONDS
 
-            rain_alert, wind_alert = check_weather_alerts(rain_now, wind_speed)
+            rain_alert, wind_alert, weather_warning  = check_weather_alerts(rain_now, wind_speed)
 
 
             if temp_alert:
@@ -185,8 +190,8 @@ if __name__ == "__main__":
                 wind_speed,
                 rain_alert,
                 wind_alert,
-            )
-
+           ) 
+            
             print(
                 f"Indoor Temp: {temperature} C | "
                 f"Indoor Humidity: {humidity} % | "
