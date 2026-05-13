@@ -1,3 +1,15 @@
+"""
+Main application for the Smart Weather and Room Monitoring System.
+
+This file:
+- reads indoor temperature and humidity from the Sense HAT
+- checks readings against threshold values
+- retrieves outdoor weather data from Open-Meteo
+- sends live readings and alert states to Blynk
+- logs readings to a CSV file for historical analysis
+- updates the Sense HAT LED matrix based on alert status
+"""
+
 from time import sleep, monotonic
 from datetime import datetime
 from random import uniform
@@ -10,6 +22,7 @@ from src.config import (
     BLYNK_AUTH_TOKEN,
     TEMP_HIGH_THRESHOLD,
     HUMIDITY_HIGH_THRESHOLD,
+    SIMULATE_SENSOR,
 )
 
 from src.services.weather_api import get_outdoor_weather
@@ -22,7 +35,7 @@ if not BLYNK_AUTH_TOKEN:
 
 blynk = BlynkLib.Blynk(BLYNK_AUTH_TOKEN)
 
-CSV_FILE = Path("sensor_log.csv")
+CSV_FILE = Path("Weather&Sensor_log.csv")
 
 # Set details for Newbridge 
 LATITUDE = 53.180385646267816
@@ -54,8 +67,6 @@ def ensure_csv_exists():
             ])
 
 
-SIMULATE_SENSOR = False
-
 def read_sensor_data():
     if SIMULATE_SENSOR:
         temperature = round(uniform(15, 40), 1)
@@ -86,6 +97,7 @@ def update_blynk(temperature, humidity, temp_alert, humidity_alert, outdoor_temp
     blynk.virtual_write(6, outdoor_humidity if outdoor_humidity is not None else 0)    
     blynk.virtual_write(7, rain_alert)
     blynk.virtual_write(8, wind_alert)    
+    
 
 
 def update_led_status(temp_alert, humidity_alert, rain_alert, wind_alert):

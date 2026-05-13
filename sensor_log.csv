@@ -1,5 +1,0 @@
-timestamp,sensor_mode,indoor_temp_c,indoor_humidity_percent,temp_status,humidity_status,outdoor_temp_c,outdoor_humidity_percent,rain_mm,wind_kmh,rain_status,wind_status
-2026-05-13 20:45:02,real,38.8,25.4,HIGH,OK,9.1,74,0.0,18.4,CLEAR,OK
-2026-05-13 20:45:04,real,38.7,25.4,HIGH,OK,9.1,74,0.0,18.4,CLEAR,OK
-2026-05-13 20:47:43,real,38.6,25.5,HIGH,OK,9.1,73,0.0,18.4,CLEAR,OK
-2026-05-13 20:47:45,real,38.5,25.3,HIGH,OK,9.1,73,0.0,18.4,CLEAR,OK

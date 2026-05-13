@@ -45,14 +45,12 @@ The aim of the project is to build a proof-of-concept connected device system th
 ---
 
 ## Networking and Communication
-- MQTT
-- HTTP requests
-- JSON data messages
+- Blynk
+
 
 ---
 
 ## Software and Frameworks
-- Mosquitto MQTT broker
 - Blynk
 - OpenWeather API
 
@@ -96,3 +94,24 @@ The aim of the project is to build a proof-of-concept connected device system th
 - Data logging to database
 
 ---
+
+# Blynk mapping table
+
+| Virtual Pin | Purpose |
+| V1 | Indoor Temperature |
+| V2 | Indoor Humidity |
+| V3 | Temperature Alert |
+| V4 | Humidity Alert |
+| V5 | Outdoor Temperature |
+| V6 | Outdoor Humidity |
+| V7 | Rain Alert |
+| V8 | Wind Alert |
+
+
+
+## How to Run
+
+Activate the virtual environment:
+source .venv/bin/activate
+
+python -m src.main
