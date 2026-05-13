@@ -1,4 +1,4 @@
-## Smart Weather & Room Monitoring System
+## Smart Weather & Room Monitoring System with alerts 
 ## Student Name: Shawn Cahill  
 ## Student ID: 20116761
 
@@ -16,8 +16,6 @@ The application will process this data and apply programmed logic and threshold 
 - Notifying the user when rain is expected
 - Comparing indoor and outdoor conditions
 - Logging historical sensor readings for trend analysis
-
-The Raspberry Pi will send structured JSON messages over the network using MQTT or HTTP. A backend service and dashboard will display live sensor readings, weather information, alerts and historical data.
 
 The aim of the project is to build a proof-of-concept connected device system that demonstrates:
 - Data collection
@@ -54,10 +52,8 @@ The aim of the project is to build a proof-of-concept connected device system th
 ---
 
 ## Software and Frameworks
-- Flask web framework
 - Mosquitto MQTT broker
-- SQLite database
-- Chart.js
+- Blynk
 - OpenWeather API
 
 ---
