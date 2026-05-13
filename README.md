@@ -6,112 +6,187 @@
 
 # Project Overview
 
-This project is an IoT-based smart monitoring system built using a Raspberry Pi. The system combines live room environment data with online weather forecast data to provide monitoring, alerts and historical analysis through a web dashboard.
+This project is a Raspberry Pi based connected device system that monitors indoor room conditions and compares them with outdoor weather data.
 
-The Raspberry Pi will collect room temperature and humidity data using the SenseHAT sensor. The project will also connect to an external weather API to retrieve current and forecast weather conditions.
+The Raspberry Pi reads indoor temperature and humidity using the Sense HAT. The system then checks the readings against threshold values and sends live data to a Blynk IoT dashboard. The project also retrieves outdoor weather information from the Open-Meteo API, including outdoor temperature, humidity, rainfall, and wind speed.
 
-The application will process this data and apply programmed logic and threshold checks. Example functionality includes:
-- Alerting when room temperature becomes too high
-- Detecting high humidity levels
-- Notifying the user when rain is expected
-- Comparing indoor and outdoor conditions
-- Logging historical sensor readings for trend analysis
-
-The aim of the project is to build a proof-of-concept connected device system that demonstrates:
-- Data collection
-- Processing and analysis
-- Networking and communication
-- Dashboard visualisation
-- Alerts and notifications
+The system provides live dashboard monitoring, alert indicators, email alert automation through Blynk, local Sense HAT LED status colours, and CSV logging for historical data.
 
 ---
 
-# Technologies and Equipment
+## Project Aim
 
-## Hardware
+The aim of this project is to build a small connected monitoring system that can:
+
+- collect indoor environmental data from a Raspberry Pi Sense HAT
+- process readings using threshold checks and alert rules
+- retrieve outdoor weather data from an external API
+- display live readings on a Blynk dashboard
+- provide alerts for indoor and outdoor conditions
+- log readings to a CSV file for historical review
+
+---
+
+## System Architecture
+
+The project follows the connected device layers from the assignment specification:
+
+| Layer | Project Implementation |
+|---|---|
+| Data Source | Raspberry Pi Sense HAT and Open-Meteo API |
+| Processing | Threshold checks, status calculation, rain and wind alert rules |
+| Network / Communication | Blynk IoT platform and HTTP API request to Open-Meteo |
+| Application | Blynk dashboard, email alerts, CSV history, Sense HAT LED output |
+
+---
+
+## Technologies Used
+
 - Raspberry Pi
-- SenseHAT
-- WiFi connection
-- Laptop/PC for development
-
----
-
-## Programming Languages
+- Sense HAT
 - Python
-- HTML
-- CSS
-- JavaScript
+- Blynk IoT Platform
+- Open-Meteo Weather API
+- CSV file logging
+- python-dotenv
+- requests
+- VS Code Remote SSH
+- Git and GitHub
 
 ---
 
-## Networking and Communication
-- Blynk
 
+## Main Features
+
+### Indoor Monitoring
+
+The Raspberry Pi reads:
+
+- indoor temperature
+- indoor humidity
+
+The readings can come from the real Sense HAT sensor or from simulated data for testing.
+
+### Threshold Alerts
+
+The system checks indoor readings against configured thresholds:
+
+- temperature alert
+- humidity alert
+
+The threshold values are stored in the `.env` file.
+
+### Outdoor Weather Data
+
+The system retrieves outdoor weather data for Newbridge using the Open-Meteo API.
+
+The outdoor data includes:
+
+- outdoor temperature
+- outdoor humidity
+- current rain value
+- wind speed
+
+### Weather Alerts
+
+The system generates outdoor weather alerts:
+
+- rain alert
+- wind alert
+
+The wind alert is triggered when wind speed is above the configured threshold in the code.
+
+### Blynk Dashboard
+
+The live dashboard displays indoor and outdoor readings, along with alert indicators.
+
+### CSV Logging
+
+The application logs readings to `weather&sensor_log.csv` 
+
+### Sense HAT LED Status
+
+The Sense HAT LED matrix changes colour depending on the current alert state.
+
+Example status colours:
+
+| LED Colour | Meaning |
+|---|---|
+| Green | Normal |
+| Red | Temperature alert |
+| Yellow | Humidity alert |
+| Purple | Temperature and humidity alert |
+| Blue | Rain or wind alert |
 
 ---
 
-## Software and Frameworks
-- Blynk
-- OpenWeather API
+## Blynk Dashboard Setup
+
+The Blynk dashboard uses four gauges and four alert indicators.
+
+### Blynk Virtual Pin Mapping
+
+| Virtual Pin | Datastream | Widget Type | Purpose |
+|---|---|---|---|
+| V1 | Temperature | Gauge | Indoor temperature |
+| V2 | Humidity | Gauge | Indoor humidity |
+| V3 | Temp Alert | LED / Label | Indoor temperature alert |
+| V4 | Humidity Alert | LED / Label | Indoor humidity alert |
+| V5 | Outdoor Temperature | Gauge | Outdoor temperature |
+| V6 | Outdoor Humidity | Gauge | Outdoor humidity |
+| V7 | Rain Alert | LED / Label | Rain detected alert |
+| V8 | Wind Alert | LED / Label | High wind alert |
+
+### Recommended Datastream Ranges
+
+| Datastream | Data Type | Min | Max | Unit |
+|---|---|---:|---:|---|
+| V1 Temperature | Double | 0 | 40 | °C |
+| V2 Humidity | Double | 0 | 100 | % |
+| V3 Temp Alert | Integer | 0 | 1 | none |
+| V4 Humidity Alert | Integer | 0 | 1 | none |
+| V5 Outdoor Temperature | Double | -5 | 40 | °C |
+| V6 Outdoor Humidity | Double | 0 | 100 | % |
+| V7 Rain Alert | Integer | 0 | 1 | none |
+| V8 Wind Alert | Integer | 0 | 1 | none |
 
 ---
 
-## Development Tools
-- VS Code
-- Git
-- GitHub
+## Blynk Email Alerts
+
+Blynk automations are used to send email alerts when alert datastreams change state.
+
+Email alerts were configured for:
+
+- temperature alert
+- humidity alert
+- rain alert
+- wind alert
+
+The alert datastreams use `0` and `1` values:
+
+| Value | Meaning |
+|---|---|
+| 0 | Normal |
+| 1 | Alert active |
+
+A limit period can be set in Blynk automations to prevent repeated emails.
 
 ---
 
-# Planned Features
+## CSV Logging
 
-## Data Sources
-- SenseHAT temperature readings
-- SenseHAT humidity readings
-- External weather API data
+The system logs historical readings to a CSV file called:
 
----
-
-## Processing
-- Threshold checks
-- Average calculations
-- Weather comparisons
-- Alert generation
-- Historical trend analysis
-
----
-
-## Networking
-- Raspberry Pi publishes data using MQTT or HTTP
-- JSON formatted data messages between components
-
----
-
-## Application Layer
-- Live dashboard
-- Historical graphs and charts
-- Alerts and notifications
-- Data logging to database
-
----
-
-# Blynk mapping table
-
-| Virtual Pin | Purpose |
-| V1 | Indoor Temperature |
-| V2 | Indoor Humidity |
-| V3 | Temperature Alert |
-| V4 | Humidity Alert |
-| V5 | Outdoor Temperature |
-| V6 | Outdoor Humidity |
-| V7 | Rain Alert |
-| V8 | Wind Alert |
-
+```bash
+weather&sensor_log.csv
 
 
 ## How to Run
+Clone repository
+git clone https://github.com/ShawnHub1/room-monitor-weather-app.git
+cd room-monitor-weather-app
 
 Activate the virtual environment:
 source .venv/bin/activate
-
 python -m src.main
