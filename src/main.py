@@ -66,11 +66,11 @@ def ensure_csv_exists():
                 "wind_status",
             ])
 
-
+# For video will add below to true so that I can hit the thresholds to get the LED to light up as I want it
 def read_sensor_data():
     if SIMULATE_SENSOR:
         temperature = round(uniform(15, 40), 1)
-        humidity = round(uniform(21, 80), 1)
+        humidity = round(uniform(21, 50), 1)
     else:
         temperature = round(sense.get_temperature(), 1)
         humidity = round(sense.get_humidity(), 1)
